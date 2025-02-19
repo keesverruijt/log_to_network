@@ -1,0 +1,76 @@
+name: Rust
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  linux_x86_64:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup latest Alpine linux
+      uses: jirutka/setup-alpine@v1.2.0
+    - name: Prepare Alpine chroot
+      run: |
+        apk add git curl bash g++ musl-dev make perl
+        curl -sSf https://sh.rustup.rs | bash -s -- -y
+      shell: alpine.sh --root {0}
+    - name: Build in Alpine chroot
+      run: cargo build --release
+      shell: alpine.sh --root {0}
+    - name: Run tests
+      run: cargo test --release --verbose
+      shell: alpine.sh --root {0}
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: Mayara Linux x86_64
+        path: target/release/log_to_network
+
+  macos:
+    runs-on: macos-13
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build
+      run: cargo build --release
+    - name: Run tests
+      run: cargo test --release --verbose
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: Mayara macOS Intel
+        path: target/release/log_to_network
+
+  macos_arm64:
+    runs-on: macos-14
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build
+      run: cargo build --release
+    - name: Run tests
+      run: cargo test --release --verbose
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: Mayara macOS Apple Silicon
+        path: target/release/log_to_network
+
+  windows:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build
+      run: cargo build --release
+    - name: Run tests
+      run: cargo test --release --verbose
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: Mayara Windows x86_64
+        path: target/release/log_to_network.exe
