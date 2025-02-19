@@ -1,10 +1,7 @@
 name: Rust
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  push
 
 env:
   CARGO_TERM_COLOR: always
@@ -30,8 +27,21 @@ jobs:
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: Mayara Linux x86_64
+        name: log_to_network Linux x86_64
         path: target/release/log_to_network
+    - name: Archive
+      uses: thedoctor0/zip-release@0.7.5
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        type: tar
+        filename: ../../log_to_network-linux-x86_64-${{ github.ref_name }}.tar.gz
+        directory: target/release
+        path: log_to_network
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: log_to_network-linux-x86_64-${{ github.ref_name }}.tar.gz
 
   macos:
     runs-on: macos-13
@@ -44,8 +54,21 @@ jobs:
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: Mayara macOS Intel
+        name: log_to_network macOS Intel
         path: target/release/log_to_network
+    - name: Archive
+      uses: thedoctor0/zip-release@0.7.5
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        type: tar
+        filename: ../../log_to_network-macos-x86_64-${{ github.ref_name }}.tar.gz
+        directory: target/release
+        path: log_to_network
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: log_to_network-macos-x86_64-${{ github.ref_name }}.tar.gz
 
   macos_arm64:
     runs-on: macos-14
@@ -58,8 +81,21 @@ jobs:
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: Mayara macOS Apple Silicon
+        name: log_to_network macOS Apple Silicon
         path: target/release/log_to_network
+    - name: Archive
+      uses: thedoctor0/zip-release@0.7.5
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        type: tar
+        filename: ../../log_to_network-macos-aarch64-${{ github.ref_name }}.tar.gz
+        directory: target/release
+        path: log_to_network
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: log_to_network-macos-aarch64-${{ github.ref_name }}.tar.gz
 
   windows:
     runs-on: windows-latest
@@ -72,5 +108,18 @@ jobs:
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: Mayara Windows x86_64
+        name: log_to_network Windows x86_64
         path: target/release/log_to_network.exe
+    - name: Archive
+      uses: thedoctor0/zip-release@0.7.5
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        type: zip
+        filename: ../../log_to_network-windows-x86_64-${{ github.ref_name }}.zip
+        directory: target/release
+        path: log_to_network.exe
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: log_to_network-windows-x86_64-${{ github.ref_name }}.zip
