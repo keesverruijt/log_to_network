@@ -1,0 +1,13 @@
+[package]
+name = "log_to_network"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+[profiles]
+
+[profile.release]
+strip = "symbols"
+lto = true
+
